@@ -13,9 +13,10 @@ RUN apk add --no-cache \
   rsyslog-pgsql \
   runit
 
-COPY ./postfix-pg-docker/run.sh /usr/sbin/run.sh
 # COPY runit_bootstrap /usr/sbin/runit_bootstrap
 # COPY rsyslog.conf /etc/rsyslog.conf
+
+COPY ./onno204/postfix-pg-docker/run.sh /usr/sbin/run.sh
 RUN chmod +x /usr/sbin/run.sh
 
 
