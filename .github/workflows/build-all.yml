@@ -15,7 +15,7 @@ jobs:
         uses: the-coding-turtle/ga-file-list@v0.4.1
         with:
           file_extension: "Dockerfile"
-          # directory: "gae_yaml"
+          directory: "Docker/onno204"
 
   build:
     needs: [lookup]
