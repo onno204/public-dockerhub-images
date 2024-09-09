@@ -29,4 +29,5 @@ jobs:
     permissions:
       packages: write
       id-token: write
+      contents: read
     uses: ./.github/workflows/build-and-publish-container.yml
