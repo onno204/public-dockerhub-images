@@ -14,25 +14,9 @@ A Postfix Docker image with PostgreSQL support. This image allows you to...
 
 ```
 docker run --rm -ti -p 25:25 -p 587:587 \
-  -e CONF_MYDOMAIN=example.com \
-  -e CONF_RELAYHOST=[smtp.mailgun.org]:587
-  -e SASL_AUTH=username:password \
-  -e POSTGRES_HOSTS=pg_host \
-  -e POSTGRES_USER=postfix_user \
-  -e POSTGRES_PASSWORD=postfix_user_password \
-  -e POSTGRES_ALIAS_DB=aliases \
-  -e POSTGRES_ALIAS_QUERY="SELECT forw_addr FROM mxaliases WHERE alias='%s'" \
-  -e POSTGRES_LOG_HOST=pg_host \
-  -e POSTGRES_LOG_DB=postfix_logs \
-  -e POSTGRES_LOG_USER=log_user \
-  -e POSTGRES_LOG_PASSWORD=log_user_password \
-  -e POSTGRES_LOG_TABLE=postfix_logs
+  -v '/mnt/user/appdata/postfix-pg/config':'/etc/postfix':'rw'
   onno204/postfix-pg-docker:latest
 ```
-
-## Configuration
-
-This image aims to make Postfix configurable primarily through environment variables so that you don't have to bake config files into your sub-image.
 
 ### General
 
