@@ -51,10 +51,11 @@ jobs:
           DOCKERFILE_NAME=$(basename '${{ inputs.DOCKERFILE_PATH }}')
           echo dockerfile: ${DOCKERFILE_NAME}
           IMAGE_NAME=${DOCKERFILE_NAME%%.*}
-          echo imagename: ${IMAGE_NAME}
+          echo image name: ${IMAGE_NAME}
           echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
           # Registry is the folder containing the Dockerfile
           REGISTRY_NAME=$(dirname '${{ inputs.DOCKERFILE_PATH }}')
+          echo registry name: ${REGISTRY_NAME}
           echo "REGISTRY_NAME=${REGISTRY_NAME}" >> $GITHUB_ENV
           # Create a time tag for the image
           # TIME_TAG=$(date +%Y%m%d%H%M%S)

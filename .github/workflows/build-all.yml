@@ -3,25 +3,26 @@ name: Build all images
 on: workflow_dispatch
 
 jobs:
-  # Docs: https://github.com/marketplace/actions/file-list
+  # Docs: https://github.com/mirko-felice/list-files-action
   lookup:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.filelist.outputs.file_names }}
+      paths: ${{ steps.list-files.outputs.paths }}
     steps:
-      - uses: actions/checkout@v2
-      - name: Get all Dockerfile files
-        id: filelist
-        uses: the-coding-turtle/ga-file-list@v0.4.1
+      - name: List Files
+        id: list-files
+        uses: mirko-felice/list-files-action@v3.0.5
         with:
-          file_extension: "Dockerfile"
-          directory: "Docker/onno204"
+          repo: ${{ github.repository }}
+          ref: ${{ github.ref }}
+          path: "."
+          ext: ".Dockerfile"
 
   build:
     needs: [lookup]
     strategy:
       matrix:
-        ImageName: ${{ fromJSON(needs.lookup.outputs.matrix) }}
+        ImageName: ${{ fromJSON(needs.lookup.outputs.paths) }}
 
     with:
       DOCKERFILE_PATH: ${{ matrix.ImageName }}
