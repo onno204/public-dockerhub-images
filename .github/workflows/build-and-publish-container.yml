@@ -54,16 +54,16 @@ jobs:
           echo image name: ${IMAGE_NAME}
           echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
           # Registry is the folder containing the Dockerfile
-          REGISTRY_NAME=$(dirname '${{ inputs.DOCKERFILE_PATH }}')
-          echo registry name: ${REGISTRY_NAME}
-          echo "REGISTRY_NAME=${REGISTRY_NAME}" >> $GITHUB_ENV
+          # REGISTRY_NAME=$(dirname '${{ inputs.DOCKERFILE_PATH }}')
+          # echo registry name: ${REGISTRY_NAME}
+          # echo "REGISTRY_NAME=${REGISTRY_NAME}" >> $GITHUB_ENV
           # Create a time tag for the image
           # TIME_TAG=$(date +%Y%m%d%H%M%S)
           # echo "TIME_TAG=${TIME_TAG}" >> $GITHUB_ENV
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
-      - name: Build and push Docker image ${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}
+      - name: Build and push Docker image ${{ env.IMAGE_NAME }}
         id: build-and-push
         uses: docker/build-push-action@v5
         with:
@@ -72,8 +72,8 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }} # Don't push on PR
           file: ${{ inputs.DOCKERFILE_PATH }}
           tags: |
-            ${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:latest
-            ${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ${{ secrets.DOCKER_USER }}/${{ env.IMAGE_NAME }}:latest
+            ${{ secrets.DOCKER_USER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           # labels: ${{ steps.meta.outputs.labels }}
           provenance: false
           cache-from: type=gha
