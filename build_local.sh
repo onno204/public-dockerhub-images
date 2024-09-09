@@ -1,2 +1,1 @@
-cd onno204
-docker build -f postfix-pg-docker.Dockerfile .
+docker build -f onno204/postfix-pg-docker.Dockerfile . -t postfix
