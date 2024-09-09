@@ -1,0 +1,29 @@
+name: Docker Image Publish
+
+on: workflow_dispatch
+
+jobs:
+  # Docs: https://github.com/marketplace/actions/file-list
+  lookup:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.filelist.outputs.file_names }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get all Dockerfile files
+        id: filelist
+        uses: the-coding-turtle/ga-file-list@v0.1
+        with:
+          # directory: "gae_yaml"
+          file_extension: "Dockerfile"
+
+  build:
+    needs: [lookup]
+    strategy:
+      matrix:
+        ImageName: ${{ fromJSON(needs.lookup.outputs.matrix) }}
+
+    with:
+      DOCKERFILE_PATH: ${{ matrix.ImageName }}
+    secrets: inherit
+    uses: ./.github/workflows/build-and-publish-container.yml
