@@ -39,4 +39,8 @@ jobs:
     with:
       DOCKERFILE_PATH: ${{ matrix.ImageName }}
     secrets: inherit
+    permissions:
+      packages: write
+      id-token: write
+      contents: read
     uses: ./.github/workflows/build-and-publish-container.yml
