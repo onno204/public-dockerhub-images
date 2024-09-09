@@ -13,12 +13,14 @@ RUN apk add --no-cache \
   rsyslog-pgsql \
   runit
 
-# COPY service /etc/service
-COPY runit_bootstrap /usr/sbin/runit_bootstrap
+COPY ./postfix-pg-docker/run.sh /usr/sbin/run.sh
+# COPY runit_bootstrap /usr/sbin/runit_bootstrap
 # COPY rsyslog.conf /etc/rsyslog.conf
+RUN chmod +x /usr/sbin/run.sh
+
 
 RUN ln -sf /dev/stdout /var/log/mail.log
 
 STOPSIGNAL SIGKILL
 
-ENTRYPOINT ["/usr/sbin/runit_bootstrap"]
+ENTRYPOINT ["/usr/sbin/run.sh"]
