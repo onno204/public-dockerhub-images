@@ -9,6 +9,7 @@ RUN apk add --no-cache \
   sed \
   postfix \ 
   postfix-pgsql \
+  postfix-btree \
   rsyslog \
   rsyslog-pgsql \
   runit
@@ -20,7 +21,6 @@ COPY ./onno204/postfix-pg-docker/rsyslog.conf /etc/rsyslog.conf
 RUN chmod +x /usr/sbin/runit_bootstrap
 RUN chmod +x /etc/service/postfix/run
 RUN chmod +x /etc/service/rsyslog/run
-
 
 RUN ln -sf /dev/stdout /var/log/mail.log
 
