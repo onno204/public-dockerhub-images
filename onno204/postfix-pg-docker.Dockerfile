@@ -9,10 +9,11 @@ RUN apk add --no-cache \
   sed \
   postfix \ 
   postfix-pgsql \
-  postfix-btree \
   rsyslog \
   rsyslog-pgsql \
   runit
+
+# postfix-btree \
 
 COPY ./onno204/postfix-pg-docker/service /etc/service
 COPY ./onno204/postfix-pg-docker/runit_bootstrap /usr/sbin/runit_bootstrap
