@@ -9,8 +9,8 @@ if ! pidof rsyslog >/dev/null 2>&1 || ! pidof rsyslogd >/dev/null 2>&1; then
   if [ -f /var/run/rsyslogd.pid ]; then
     PID=$(cat /var/run/rsyslogd.pid)
     echo "Killing rsyslog with PID $PID"
-    kill -9 $PID
     rm -f /var/run/rsyslogd.pid
+    kill -9 $PID
   fi
 
   # Start rsyslog
