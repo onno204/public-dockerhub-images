@@ -84,4 +84,5 @@ if [[ -z "$cmd" ]]; then
   exit 1
 fi
 
+echo starting postfix
 "$cmd" -c /etc/postfix -d 2>&1
