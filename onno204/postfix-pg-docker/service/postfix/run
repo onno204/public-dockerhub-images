@@ -1,5 +1,32 @@
 #!/bin/bash
 set -e
+trap 'exit 0' SIGTERM
+
+if ! pidof master >/dev/null 2>&1; then
+
+  if [[ -f "/usr/libexec/postfix/master" ]]; then
+    cmd="/usr/libexec/postfix/master"
+  fi
+
+  if [[ -f "/usr/lib/postfix/master" ]]; then
+    cmd="/usr/lib/postfix/master"
+  fi
+
+  if [[ -z "$cmd" ]]; then
+    echo "Could not find postfix master in /usr/lib or /usr/libexec"
+    exit 1
+  fi
+
+  echo starting postfix
+  "$cmd" -c /etc/postfix -d 2>&1
+else
+  echo "PostFix master is already running"
+
+  # read -n 1 -p "Input Selection:" mainmenuinput
+  while true; do
+    sleep 1
+  done
+fi
 
 # # Avoid  warning: smtputf8_enable is true, but EAI support is not compiled in
 # echo "smtputf8_enable = no" >> /etc/postfix/main.cf
@@ -70,19 +97,3 @@ set -e
 
 # 	postconf -e alias_maps=pgsql:/etc/postfix/pg_aliases.cf
 # fi
-
-if [[ -f "/usr/libexec/postfix/master" ]]; then
-  cmd="/usr/libexec/postfix/master"
-fi
-
-if [[ -f "/usr/lib/postfix/master" ]]; then
-  cmd="/usr/lib/postfix/master"
-fi
-
-if [[ -z "$cmd" ]]; then
-  echo "Could not find postfix master in /usr/lib or /usr/libexec"
-  exit 1
-fi
-
-echo starting postfix
-"$cmd" -c /etc/postfix -d 2>&1
