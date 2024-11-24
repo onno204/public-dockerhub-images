@@ -28,10 +28,10 @@ FROM photon-builder as production
 
 VOLUME /var/lib/postgresql/data
 
-COPY ./onno204/harbor-db/docker-entrypoint.sh /docker-entrypoint.sh
-COPY ./onno204/harbor-db/initdb.sh /initdb.sh
-COPY ./onno204/harbor-db/upgrade.sh /upgrade.sh
-COPY ./onno204/harbor-db/docker-healthcheck.sh /docker-healthcheck.sh
+COPY --chmod=0755 ./onno204/harbor-db/docker-entrypoint.sh /docker-entrypoint.sh
+COPY --chmod=0755 ./onno204/harbor-db/initdb.sh /initdb.sh
+COPY --chmod=0755 ./onno204/harbor-db/upgrade.sh /upgrade.sh
+COPY --chmod=0755 ./onno204/harbor-db/docker-healthcheck.sh /docker-healthcheck.sh
 COPY ./onno204/harbor-db/initial-registry.sql /docker-entrypoint-initdb.d/
 
 
