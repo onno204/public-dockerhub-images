@@ -33,8 +33,10 @@ COPY ./onno204/harbor-db/initdb.sh /initdb.sh
 COPY ./onno204/harbor-db/upgrade.sh /upgrade.sh
 COPY ./onno204/harbor-db/docker-healthcheck.sh /docker-healthcheck.sh
 COPY ./onno204/harbor-db/initial-registry.sql /docker-entrypoint-initdb.d/
+
+
 RUN chown -R postgres:postgres /docker-entrypoint.sh /docker-healthcheck.sh /docker-entrypoint-initdb.d \
-  && chmod u+x /docker-entrypoint.sh /docker-healthcheck.sh
+  && chmod u+x /docker-entrypoint.sh /docker-healthcheck.sh /upgrade.sh
 
 ENTRYPOINT ["/docker-entrypoint.sh", "14", "15"]
 HEALTHCHECK CMD ["/docker-healthcheck.sh"]

@@ -6,34 +6,19 @@ PGDATAOLD=""
 PGDATANEW=""
 
 while [[ "$#" -gt 0 ]]; do
-  case $1 in
-  -b | --old-datadir)
-    PGDATAOLD="$2"
-    shift
-    ;;
-  -B | --new-datadir)
-    PGDATANEW="$2"
-    shift
-    ;;
-  -d | --old-bindir)
-    PGBINOLD="$2"
-    shift
-    ;;
-  -D | --new-bindir)
-    PGBINNEW="$2"
-    shift
-    ;;
-  *)
-    echo "Unknown parameter passed: $1"
-    exit 1
-    ;;
-  esac
-  shift
+        case $1 in
+                -b|--old-datadir) PGDATAOLD="$2"; shift ;;
+                -B|--new-datadir) PGDATANEW="$2"; shift ;;
+                -d|--old-bindir) PGBINOLD="$2"; shift ;;
+                -D|--new-bindir) PGBINNEW="$2"; shift ;;
+                *) echo "Unknown parameter passed: $1"; exit 1 ;;
+        esac
+        shift
 done
 
 if [ "$PGDATAOLD" = "" ] || [ "$PGDATANEW" = "" ]; then
-  echo "required parameter is missing: $PGDATAOLD, $PGDATANEW"
-  exit 1
+        echo "required parameter is missing: $PGDATAOLD, $PGDATANEW"
+        exit 1
 fi
 
 export PGDATAOLD=$PGDATAOLD
@@ -52,9 +37,9 @@ ${PGBINNEW}/pg_upgrade \
   --new-options '-c config_file=$PGDATANEW/postgresql.conf'
 
 if [ $? -ne 0 ]; then
-  echo 'fail to upgrade.'
-  cat /tmp/pg_upgrade_internal.log
-  exit 1
+        echo 'fail to upgrade.'
+        cat /tmp/pg_upgrade_internal.log
+        exit 1
 fi
 
 cp $PGDATAOLD/pg_hba.conf $PGDATANEW/pg_hba.conf
