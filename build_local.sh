@@ -1,1 +1,1 @@
-docker build -f onno204/postfix-pg-docker.Dockerfile . -t postfix
+docker build -f onno204/harbor-db.Dockerfile . -t postfix
