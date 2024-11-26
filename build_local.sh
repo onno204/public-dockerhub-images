@@ -1,1 +1,1 @@
-docker build -f onno204/harbor-db.Dockerfile . -t postfix
+docker build -f onno204/harbor-registry.Dockerfile . -t postfix --progress plain
