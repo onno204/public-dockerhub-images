@@ -16,6 +16,7 @@ fi
 cp $ORIGINAL_LOCATION/ca-bundle.crt.original /etc/pki/tls/certs/ca-bundle.crt
 
 # Install /etc/harbor/ssl/{component}/ca.crt to trust CA.
+mkdir -p /etc/harbor/ssl
 echo "Appending internal tls trust CA to ca-bundle ..."
 for caFile in $(find /etc/harbor/ssl -maxdepth 2 -name ca.crt); do
   cat $caFile >>/etc/pki/tls/certs/ca-bundle.crt
