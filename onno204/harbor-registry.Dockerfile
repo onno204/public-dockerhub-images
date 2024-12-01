@@ -9,7 +9,9 @@ ENV GO111MODULE auto
 WORKDIR $DISTRIBUTION_DIR
 # COPY ./onno204/harbor-registry/ $DISTRIBUTION_DIR
 
-RUN git clone https://gitlab.com/gitlab-org/container-registry.git .
+# RUN git clone https://gitlab.com/gitlab-org/container-registry.git .
+RUN git clone https://github.com/distribution/distribution.git .
+
 RUN CGO_ENABLED=0 make PREFIX=/go clean binaries
 
 # START: https://github.com/goharbor/harbor/blob/main/make/photon/registry/Dockerfile.base
