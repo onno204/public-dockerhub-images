@@ -1,5 +1,6 @@
 # Copied from https://github.com/goharbor/harbor/blob/main/make/photon/registry/Dockerfile
 
+# START: https://github.com/goharbor/harbor/blob/main/make/photon/registry/Dockerfile.binary
 FROM golang:1.23.2 as go-binary
 
 ENV DISTRIBUTION_DIR /go/src/github.com/docker/distribution
