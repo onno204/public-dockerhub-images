@@ -10,7 +10,7 @@ ENV GO111MODULE auto
 WORKDIR $DISTRIBUTION_DIR
 
 # RUN git clone https://gitlab.com/gitlab-org/container-registry.git .
-RUN git clone https://github.com/distribution/distribution.git .
+RUN git clone -b release/2.8 --single-branch https://github.com/distribution/distribution.git .
 
 # COPY ./onno204/harbor-registry/ $DISTRIBUTION_DIR
 COPY --chmod=0755 ./onno204/harbor-registry $DISTRIBUTION_DIR
