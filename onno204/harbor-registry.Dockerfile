@@ -8,10 +8,12 @@ ENV BUILDTAGS include_oss include_gcs
 ENV GO111MODULE auto
 
 WORKDIR $DISTRIBUTION_DIR
-# COPY ./onno204/harbor-registry/ $DISTRIBUTION_DIR
 
 # RUN git clone https://gitlab.com/gitlab-org/container-registry.git .
 RUN git clone https://github.com/distribution/distribution.git .
+
+# COPY ./onno204/harbor-registry/ $DISTRIBUTION_DIR
+COPY --chmod=0755 ./onno204/harbor-registry $DISTRIBUTION_DIR
 
 RUN CGO_ENABLED=0 make PREFIX=/go clean binaries
 
