@@ -1,1 +1,1 @@
-docker build -f onno204/harbor-registry.Dockerfile . -t postfix --progress plain
+docker build -f onno204/hetzner-cloud-controller-manager.Dockerfile . -t hccm --progress plain
