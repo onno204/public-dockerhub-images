@@ -8,7 +8,6 @@ RUN apk add --no-cache \
   mailx \
   sed \
   postfix \
-  postfix-lmdb \
   postfix-pgsql
 
 # postfix-btree \
