@@ -7,24 +7,15 @@ RUN apk add --no-cache \
   libsasl \
   mailx \
   sed \
-  postfix \ 
-  postfix-pgsql \
-  rsyslog \
-  rsyslog-pgsql \
-  runit
+  postfix \
+  postfix-pgsql
 
 # postfix-btree \
 
-COPY ./onno204/postfix-pg-docker/service /etc/service
-COPY ./onno204/postfix-pg-docker/runit_bootstrap /usr/sbin/runit_bootstrap
-COPY ./onno204/postfix-pg-docker/rsyslog.conf /etc/rsyslog.conf
+# If postfix fails to open /dev/stdout after a restart ("Permission denied"), run: chmod 666 /dev/stdout
+# See: https://github.com/Mailu/Mailu/issues/3271
+RUN postconf -e "maillog_file=/dev/stdout"
 
-RUN chmod +x /usr/sbin/runit_bootstrap
-RUN chmod +x /etc/service/postfix/run
-RUN chmod +x /etc/service/rsyslog/run
+STOPSIGNAL SIGTERM
 
-RUN ln -sf /dev/stdout /var/log/mail.log
-
-STOPSIGNAL SIGKILL
-
-ENTRYPOINT ["/usr/sbin/runit_bootstrap"]
+ENTRYPOINT ["postfix", "start-fg"]
