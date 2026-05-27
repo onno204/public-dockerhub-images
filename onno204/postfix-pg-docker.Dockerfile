@@ -16,10 +16,8 @@ RUN apk add --no-cache \
 # See: https://github.com/Mailu/Mailu/issues/3271
 RUN postconf -e "maillog_file=/dev/stdout"
 
-# postfix-files is installed by the package into /etc/postfix/, but a volume mount over /etc/postfix
-# hides it. postfix start-fg calls post-install which requires this file to set up queue directories.
-# Save it outside /etc/postfix so the entrypoint can restore it after the volume is mounted.
-RUN cp /etc/postfix/postfix-files /usr/share/postfix/postfix-files
+# etc/postfix/postfix-files is required for `postfix start-fg`, but removed when overwriting a volume-mount
+RUN mkdir -p /usr/share/postfix && cp /etc/postfix/postfix-files /usr/share/postfix/postfix-files
 
 COPY ./onno204/postfix-pg-docker/entrypoint.sh /usr/sbin/entrypoint.sh
 RUN chmod +x /usr/sbin/entrypoint.sh
