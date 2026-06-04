@@ -64,7 +64,7 @@ COPY --from=builder /build/FunASR/runtime/ssl_key/ /opt/funasr/ssl_key/
 
 RUN chmod +x /opt/funasr/bin/*
 
-COPY entrypoint.sh /opt/funasr/entrypoint.sh
+COPY funasr/entrypoint.sh /opt/funasr/entrypoint.sh
 RUN chmod +x /opt/funasr/entrypoint.sh
 
 VOLUME /workspace/models
