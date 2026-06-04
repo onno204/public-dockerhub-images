@@ -1,0 +1,76 @@
+FROM ubuntu:22.04 AS builder
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    cmake \
+    git \
+    wget \
+    ca-certificates \
+    libssl-dev \
+    libsndfile1-dev \
+    python3 \
+    python3-dev \
+    python3-pip \
+    python3-venv \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 1
+
+WORKDIR /build
+
+RUN git clone --depth 1 --branch main https://github.com/modelscope/FunASR.git
+
+RUN cd /build/FunASR/runtime/onnxruntime/third_party && \
+    wget -q https://github.com/microsoft/onnxruntime/releases/download/v1.14.0/onnxruntime-linux-x64-1.14.0.tgz && \
+    tar -xzf onnxruntime-linux-x64-1.14.0.tgz && \
+    rm onnxruntime-linux-x64-1.14.0.tgz
+
+RUN mkdir -p /build/FunASR/runtime/websocket/build && \
+    cd /build/FunASR/runtime/websocket/build && \
+    cmake .. \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DENABLE_PORTAUDIO=OFF \
+        -DENABLE_GLOG=OFF \
+        -DONNXRUNTIME_DIR=/build/FunASR/runtime/onnxruntime/third_party/onnxruntime-linux-x64-1.14.0 && \
+    make -j$(nproc)
+
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libssl3 \
+    libsndfile1 \
+    python3 \
+    python3-pip \
+    python3-venv \
+    wget \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install --no-cache-dir --break-system-packages \
+    funasr \
+    modelscope \
+    huggingface_hub
+
+COPY --from=builder /build/FunASR/runtime/websocket/build/bin/ /opt/funasr/bin/
+COPY --from=builder /build/FunASR/runtime/run_server_2pass.sh /opt/funasr/
+COPY --from=builder /build/FunASR/runtime/run_server.sh /opt/funasr/
+COPY --from=builder /build/FunASR/runtime/ssl_key/ /opt/funasr/ssl_key/
+
+RUN chmod +x /opt/funasr/bin/*
+
+COPY entrypoint.sh /opt/funasr/entrypoint.sh
+RUN chmod +x /opt/funasr/entrypoint.sh
+
+VOLUME /workspace/models
+
+EXPOSE 10095
+
+WORKDIR /opt/funasr
+
+ENTRYPOINT ["/opt/funasr/entrypoint.sh"]
