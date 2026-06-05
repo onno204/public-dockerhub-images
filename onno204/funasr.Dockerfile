@@ -14,6 +14,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-dev \
     python3-pip \
     python3-venv \
+    autoconf \
+    automake \
+    libtool \
+    portaudio19-dev \
     && rm -rf /var/lib/apt/lists/*
 
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 1
@@ -32,7 +36,7 @@ RUN mkdir -p /build/FunASR/runtime/websocket/build && \
     cmake .. \
         -DCMAKE_BUILD_TYPE=Release \
         -DENABLE_PORTAUDIO=OFF \
-        -DENABLE_GLOG=OFF \
+        -DENABLE_GLOG=ON \
         -DONNXRUNTIME_DIR=/build/FunASR/runtime/onnxruntime/third_party/onnxruntime-linux-x64-1.14.0 && \
     make -j$(nproc)
 
@@ -52,7 +56,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install --no-cache-dir --break-system-packages \
+RUN pip3 install --no-cache-dir \
     funasr \
     modelscope \
     huggingface_hub
@@ -64,7 +68,7 @@ COPY --from=builder /build/FunASR/runtime/ssl_key/ /opt/funasr/ssl_key/
 
 RUN chmod +x /opt/funasr/bin/*
 
-COPY funasr/entrypoint.sh /opt/funasr/entrypoint.sh
+COPY ./onno204/funasr/entrypoint.sh /opt/funasr/entrypoint.sh
 RUN chmod +x /opt/funasr/entrypoint.sh
 
 VOLUME /workspace/models
