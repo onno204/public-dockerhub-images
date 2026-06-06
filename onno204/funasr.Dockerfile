@@ -47,7 +47,10 @@ RUN mkdir -p /build/FunASR/runtime/websocket/build && \
         -DENABLE_PORTAUDIO=OFF \
         -DENABLE_GLOG=ON \
         -DONNXRUNTIME_DIR=/build/FunASR/runtime/onnxruntime/third_party/onnxruntime-linux-x64-1.14.0 && \
-    make -j$(nproc)
+    make -j$(nproc) && \
+    mkdir -p /build/libs && \
+    find . -name "*.so*" -exec cp {} /build/libs/ \; && \
+    cp /build/FunASR/runtime/onnxruntime/third_party/onnxruntime-linux-x64-1.14.0/lib/libonnxruntime.so* /build/libs/
 
 FROM ubuntu:22.04
 
@@ -63,19 +66,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-venv \
     wget \
     ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -s /usr/bin/python3 /usr/bin/python
 
 RUN pip3 install --no-cache-dir \
     funasr \
     modelscope \
     huggingface_hub
 
+COPY --from=builder /build/libs/ /opt/funasr/lib/
 COPY --from=builder /build/FunASR/runtime/websocket/build/bin/ /opt/funasr/bin/
 COPY --from=builder /build/FunASR/runtime/run_server_2pass.sh /opt/funasr/
 COPY --from=builder /build/FunASR/runtime/run_server.sh /opt/funasr/
 COPY --from=builder /build/FunASR/runtime/ssl_key/ /opt/funasr/ssl_key/
 
-RUN chmod +x /opt/funasr/bin/*
+ENV LD_LIBRARY_PATH="/opt/funasr/lib"
+
+RUN ldconfig && chmod +x /opt/funasr/bin/*
 
 COPY ./onno204/funasr/entrypoint.sh /opt/funasr/entrypoint.sh
 RUN chmod +x /opt/funasr/entrypoint.sh
