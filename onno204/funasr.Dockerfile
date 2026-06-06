@@ -26,10 +26,19 @@ WORKDIR /build
 
 RUN git clone --depth 1 --branch main https://github.com/modelscope/FunASR.git
 
+ARG TARGETARCH
 RUN cd /build/FunASR/runtime/onnxruntime/third_party && \
-    wget -q https://github.com/microsoft/onnxruntime/releases/download/v1.14.0/onnxruntime-linux-x64-1.14.0.tgz && \
-    tar -xzf onnxruntime-linux-x64-1.14.0.tgz && \
-    rm onnxruntime-linux-x64-1.14.0.tgz
+    if [ "$TARGETARCH" = "arm64" ]; then \
+        ONNXRT_ARCH="aarch64"; \
+    else \
+        ONNXRT_ARCH="x64"; \
+    fi && \
+    wget -q https://github.com/microsoft/onnxruntime/releases/download/v1.14.0/onnxruntime-linux-${ONNXRT_ARCH}-1.14.0.tgz && \
+    tar -xzf onnxruntime-linux-${ONNXRT_ARCH}-1.14.0.tgz && \
+    rm onnxruntime-linux-${ONNXRT_ARCH}-1.14.0.tgz && \
+    if [ "$TARGETARCH" = "arm64" ]; then \
+        mv onnxruntime-linux-aarch64-1.14.0 onnxruntime-linux-x64-1.14.0; \
+    fi
 
 RUN mkdir -p /build/FunASR/runtime/websocket/build && \
     cd /build/FunASR/runtime/websocket/build && \
