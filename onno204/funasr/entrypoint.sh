@@ -19,8 +19,14 @@ ONLINE_MODEL_HF="${ONLINE_MODEL_HF:-funasr/paraformer-zh-streaming}"
 ITN_MODEL="${ITN_MODEL:-thuduj12/fst_itn_zh}"
 LM_MODEL="${LM_MODEL:-damo/speech_ngram_lm_zh-cn-ai-wesp-fst}"
 
+# Use HuggingFace ID for directory if it's different from default
+if [ "${ASR_MODEL_HF}" != "funasr/Paraformer-large" ]; then
+    ASR_MODEL_DIR="${MODEL_DIR}/${ASR_MODEL_HF}"
+else
+    ASR_MODEL_DIR="${MODEL_DIR}/${ASR_MODEL_MS}"
+fi
+
 VAD_MODEL_DIR="${MODEL_DIR}/${VAD_MODEL_MS}"
-ASR_MODEL_DIR="${MODEL_DIR}/${ASR_MODEL_MS}"
 PUNC_MODEL_DIR="${MODEL_DIR}/${PUNC_MODEL_MS}"
 ONLINE_MODEL_DIR="${MODEL_DIR}/${ONLINE_MODEL_MS}"
 ITN_MODEL_DIR="${MODEL_DIR}/${ITN_MODEL}"
@@ -34,7 +40,7 @@ download_model() {
     local model_dir="$3"
     local required_file="${4:-model_quant.onnx}"
     
-    if [ -f "${model_dir}/${required_file}" ]; then
+    if [ -f "${model_dir}/${required_file}" ] || [ -f "${model_dir}/sense-voice-encoder.onnx" ] || [ -f "${model_dir}/sense-voice-encoder-int8.onnx" ]; then
         echo "  Already exists: ${model_id_ms}"
         return 0
     fi
@@ -55,8 +61,8 @@ except Exception as e:
         print(f'  ModelScope failed: {e2}')
         exit(1)
 "
-    if [ ! -f "${model_dir}/${required_file}" ]; then
-        echo "  WARNING: ${required_file} not found in ${model_dir}"
+    if [ ! -f "${model_dir}/${required_file}" ] && [ ! -f "${model_dir}/sense-voice-encoder.onnx" ] && [ ! -f "${model_dir}/sense-voice-encoder-int8.onnx" ]; then
+        echo "  WARNING: No model file found in ${model_dir}"
         ls -la "${model_dir}" 2>/dev/null || true
     fi
 }
